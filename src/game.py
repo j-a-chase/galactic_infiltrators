@@ -10,6 +10,7 @@
 
 # imports
 import arcade
+import os
 
 # screen constants
 SCREEN_WIDTH = 640
@@ -24,7 +25,7 @@ SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SCALING
 
 # game constants
-BULLET_SPEED = 5
+BULLET_SPEED = 20
 BG_COLOR = (0,0,64)
 
 # player starting position
@@ -41,6 +42,10 @@ class Game(arcade.Window):
     def __init__(self):
         # window setup with parent class
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, SCREEN_TITLE, center_window=True)
+
+        # set working directory to be able to reference local resources
+        file_path = os.path.dirname(os.path.abspath(__file__))
+        os.chdir(file_path)
 
         # scene object for sprites
         self.scene = None
@@ -91,6 +96,18 @@ class Game(arcade.Window):
         self.player_sprite.center_x = PLAYER_START_X
         self.player_sprite.center_y = PLAYER_START_Y
         self.scene.add_sprite(LN_PLAYER, self.player_sprite)
+
+        # setup enemies for level one
+        if self.level == 1:
+            for i in range(5):
+                # generate alien instance
+                alien = arcade.Sprite("./resources/custom_sprites/alien_basic.png", TILE_SCALING)
+
+                # position alien
+                alien.center_x = 2 * GRID_PIXEL_SIZE * i + GRID_PIXEL_SIZE
+                alien.center_y = SCREEN_HEIGHT - GRID_PIXEL_SIZE
+
+                self.scene.add_sprite(LN_ENEMIES, alien)
 
         # set background color
         arcade.set_background_color(BG_COLOR)

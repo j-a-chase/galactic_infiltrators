@@ -8,9 +8,12 @@
 #
 ######################################################################################################################################################
 
-# imports
+# module imports
 import arcade
 import os
+
+# class imports
+from alien import Alien
 
 # screen constants
 SCREEN_WIDTH = 640
@@ -27,6 +30,7 @@ GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SCALING
 # game constants
 BULLET_SPEED = 20
 BG_COLOR = (0,0,64)
+ANIMATION_TIMER_CAP = 60
 
 # player starting position
 PLAYER_START_X = 320
@@ -69,6 +73,9 @@ class Game(arcade.Window):
         self.player_laser_sound = arcade.load_sound(":resources:sounds/laser2.wav")
         self.enemy_hit_sound = arcade.load_sound(":resources:sounds/hit4.wav")
 
+        # timer for animations
+        self.animation_timer = 0
+
         # set window background color
         arcade.set_background_color(BG_COLOR)
 
@@ -90,6 +97,8 @@ class Game(arcade.Window):
         self.scene.add_sprite_list(LN_ENEMIES)
         self.scene.add_sprite_list(LN_BULLETS)
 
+        self.animation_timer = 0
+
         # setup player
         self.score = 0
         self.player_sprite = arcade.Sprite(":resources:images/space_shooter/playerShip1_blue.png", CHARACTER_SCALING)
@@ -101,7 +110,7 @@ class Game(arcade.Window):
         if self.level == 1:
             for i in range(5):
                 # generate alien instance
-                alien = arcade.Sprite("./resources/custom_sprites/alien_basic.png", TILE_SCALING)
+                alien = Alien(TILE_SCALING)
 
                 # position alien
                 alien.center_x = 2 * GRID_PIXEL_SIZE * i + GRID_PIXEL_SIZE
@@ -145,6 +154,12 @@ class Game(arcade.Window):
 
         # call update on each bullet
         bullet_list.update()
+
+        # call update on each enemy
+        self.animation_timer += 1
+        if self.animation_timer == ANIMATION_TIMER_CAP:
+            enemy_list.update()
+            self.animation_timer = 0
 
         # check for bullet collisions
         for bullet in bullet_list:

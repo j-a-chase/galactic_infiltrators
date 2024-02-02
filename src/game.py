@@ -25,6 +25,7 @@ GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SCALING
 
 # game constants
 BULLET_SPEED = 5
+BG_COLOR = (0,0,64)
 
 # player starting position
 PLAYER_START_X = 320
@@ -64,7 +65,7 @@ class Game(arcade.Window):
         self.enemy_hit_sound = arcade.load_sound(":resources:sounds/hit4.wav")
 
         # set window background color
-        arcade.set_background_color(arcade.csscolor.DARK_BLUE)
+        arcade.set_background_color(BG_COLOR)
 
     def setup(self) -> None:
         '''
@@ -92,7 +93,7 @@ class Game(arcade.Window):
         self.scene.add_sprite(LN_PLAYER, self.player_sprite)
 
         # set background color
-        arcade.set_background_color(arcade.csscolor.DARK_BLUE)
+        arcade.set_background_color(BG_COLOR)
 
     def on_draw(self) -> None:
         '''

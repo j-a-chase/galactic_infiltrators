@@ -23,7 +23,7 @@ SCREEN_TITLE = "Galactic Infiltrators"
 # sprite constants
 CHARACTER_SCALING = 1
 CHARACTER_LASER_SCALING = 0.8
-TILE_SCALING = 0.5
+TILE_SCALING = 0.25
 SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SCALING
 
@@ -31,6 +31,8 @@ GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SCALING
 BULLET_SPEED = 20
 BG_COLOR = (0,0,64)
 ANIMATION_TIMER_CAP = 60
+LVL_ONE_ENEMY_COUNT = 45
+LVL_ONE_ENEMY_ROW_CAP = 5
 
 # player starting position
 PLAYER_START_X = 320
@@ -108,15 +110,37 @@ class Game(arcade.Window):
 
         # setup enemies for level one
         if self.level == 1:
-            for i in range(5):
-                # generate alien instance
-                alien = Alien(TILE_SCALING)
+            total_enemies = 0
+            for row in range(LVL_ONE_ENEMY_ROW_CAP):
+                i = 0
+                if row % 2 == 0:
+                    while i < 10 and total_enemies < LVL_ONE_ENEMY_COUNT:
+                        # generate alien instance
+                        alien = Alien(TILE_SCALING, GRID_PIXEL_SIZE)
 
-                # position alien
-                alien.center_x = 2 * GRID_PIXEL_SIZE * i + GRID_PIXEL_SIZE
-                alien.center_y = SCREEN_HEIGHT - GRID_PIXEL_SIZE
+                        # position alien
+                        alien.center_x = 2 * GRID_PIXEL_SIZE * i + GRID_PIXEL_SIZE
+                        alien.center_y = SCREEN_HEIGHT - GRID_PIXEL_SIZE - (GRID_PIXEL_SIZE * row)
 
-                self.scene.add_sprite(LN_ENEMIES, alien)
+                        print(f'{total_enemies+1} - {alien.center_x}, {alien.center_y}')
+
+                        self.scene.add_sprite(LN_ENEMIES, alien)
+                        i += 1
+                        total_enemies += 1
+                else:
+                    while i < 9 and total_enemies < LVL_ONE_ENEMY_COUNT:
+                        # generate alien instance
+                        alien = Alien(TILE_SCALING, GRID_PIXEL_SIZE, left=-1)
+
+                        # position alien
+                        alien.center_x = 2 * GRID_PIXEL_SIZE * (9 - i)
+                        alien.center_y = SCREEN_HEIGHT - GRID_PIXEL_SIZE - (GRID_PIXEL_SIZE * row)
+
+                        print(f'{total_enemies+1} - {alien.center_x}, {alien.center_y}')
+
+                        self.scene.add_sprite(LN_ENEMIES, alien)
+                        i += 1
+                        total_enemies += 1
 
         # set background color
         arcade.set_background_color(BG_COLOR)

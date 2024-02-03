@@ -73,6 +73,4 @@ class Alien(arcade.Sprite):
             self.is_right *= -1
         self.center_x = new_x
 
-        print(self.center_x, self.center_y)
-
 if __name__ == '__main__': assert False, 'This is a class file. Please import its contents into another file.'

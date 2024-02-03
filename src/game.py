@@ -122,8 +122,6 @@ class Game(arcade.Window):
                         alien.center_x = 2 * GRID_PIXEL_SIZE * i + GRID_PIXEL_SIZE
                         alien.center_y = SCREEN_HEIGHT - GRID_PIXEL_SIZE - (GRID_PIXEL_SIZE * row)
 
-                        print(f'{total_enemies+1} - {alien.center_x}, {alien.center_y}')
-
                         self.scene.add_sprite(LN_ENEMIES, alien)
                         i += 1
                         total_enemies += 1
@@ -135,8 +133,6 @@ class Game(arcade.Window):
                         # position alien
                         alien.center_x = 2 * GRID_PIXEL_SIZE * (9 - i)
                         alien.center_y = SCREEN_HEIGHT - GRID_PIXEL_SIZE - (GRID_PIXEL_SIZE * row)
-
-                        print(f'{total_enemies+1} - {alien.center_x}, {alien.center_y}')
 
                         self.scene.add_sprite(LN_ENEMIES, alien)
                         i += 1

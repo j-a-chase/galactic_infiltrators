@@ -35,7 +35,7 @@ BG_COLOR = (0,0,64)
 ANIMATION_TIMER_CAP = 30
 LVL_ONE_ENEMY_COUNT = 45
 LVL_ONE_ENEMY_ROW_CAP = 5
-ENEMY_BULLET_SPEED = -5
+ENEMY_BULLET_SPEED = -6
 ENEMY_FIRING_ODDS = 1000
 
 # player starting position
@@ -220,15 +220,20 @@ class Game(arcade.Window):
             if bullet.bottom > SCREEN_HEIGHT:
                 bullet.remove_from_sprite_lists()
 
+        # check each enemy
         for enemy in enemy_list:
+            # if they've hit the player with their body
             player_is_hit = arcade.check_for_collision(enemy, self.player_sprite)
 
+            # instant game over
             if player_is_hit:
                 print('Game Over!')
-                arcade.close_window()
+                arcade.exit()
 
+            # calculate firing odds
             odds = int(ENEMY_FIRING_ODDS * (1/60) / delta_time)
 
+            # fire bullet if odds are there
             if random.randrange(odds) == 0:
                 bullet = arcade.Sprite(':resources:images/space_shooter/laserRed01.png', ENEMY_LASER_SCALING)
                 bullet.center_x = enemy.center_x
@@ -237,21 +242,26 @@ class Game(arcade.Window):
                 bullet.change_y = ENEMY_BULLET_SPEED
                 self.scene.add_sprite(LN_ENEMY_BULLETS, bullet)
 
+        # check each enemy bullet
         for bullet in enemy_bullet_list:
+            # if it hits the player
             player_is_hit = arcade.check_for_collision(bullet, self.player_sprite)
 
+            # deal damage and remove a life
             if player_is_hit:
                 arcade.play_sound(self.player_hit_sound)
                 self.player_lives -= 1
                 print(f'{self.player_lives} lives left!')
                 bullet.remove_from_sprite_lists()
 
+            # if enemy bullet goes off bottom of screen, remove bullet
             if bullet.top < 0:
                 bullet.remove_from_sprite_lists()
             
+            # if player lives are zero, end game.
             if self.player_lives == 0:
                 print('Game Over!')
-                arcade.close_window()
+                arcade.exit()
 
     def on_mouse_motion(self, x, y, dx, dy) -> None:
         '''

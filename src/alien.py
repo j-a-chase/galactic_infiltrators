@@ -15,7 +15,7 @@ import math
 
 # image constants
 TXT_STATIC = 0
-TXT_FIRE = 1
+TXT_MOVE = 1
 
 # enemy constants
 ENEMY_SPEED = 3.0
@@ -56,21 +56,33 @@ class Alien(arcade.Sprite):
         self.textures.append(texture)
 
     def update(self):
+
+        # oscilate between static and moving positions
         if self.txt_num == TXT_STATIC:
-            self.texture = self.textures[TXT_FIRE]
-            self.txt_num = TXT_FIRE
-        elif self.txt_num == TXT_FIRE:
+            self.texture = self.textures[TXT_MOVE]
+            self.txt_num = TXT_MOVE
+        elif self.txt_num == TXT_MOVE:
             self.texture = self.textures[TXT_STATIC]
             self.txt_num = TXT_STATIC
         
         # update position
         new_x = self.center_x
 
+        # determine if it is moving right or left
         new_x += self.size * self.is_right
+        
+        # keep aliens from going out of bounds and instead move them down a row
         if new_x > arcade.get_window().width - self.size or new_x < self.size:
+            # reset x-position to previous value
             new_x = self.center_x
+
+            # move y-position down a row
             self.center_y -= self.size
+            
+            # reverse movement direction
             self.is_right *= -1
+
+        # update alien x-position
         self.center_x = new_x
 
 if __name__ == '__main__': assert False, 'This is a class file. Please import its contents into another file.'

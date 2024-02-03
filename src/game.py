@@ -99,6 +99,7 @@ class Game(arcade.Window):
         self.scene.add_sprite_list(LN_ENEMIES)
         self.scene.add_sprite_list(LN_BULLETS)
 
+        # animation timer for alien animations
         self.animation_timer = 0
 
         # setup player
@@ -110,9 +111,14 @@ class Game(arcade.Window):
 
         # setup enemies for level one
         if self.level == 1:
+            # keeps track of total enemies generated between rows
             total_enemies = 0
+
+            # generates enemies row by row
             for row in range(LVL_ONE_ENEMY_ROW_CAP):
                 i = 0
+                
+                # even rows can have 10 aliens
                 if row % 2 == 0:
                     while i < 10 and total_enemies < LVL_ONE_ENEMY_COUNT:
                         # generate alien instance
@@ -122,9 +128,11 @@ class Game(arcade.Window):
                         alien.center_x = 2 * GRID_PIXEL_SIZE * i + GRID_PIXEL_SIZE
                         alien.center_y = SCREEN_HEIGHT - GRID_PIXEL_SIZE - (GRID_PIXEL_SIZE * row)
 
+                        # add alien to sprite list and increment counters
                         self.scene.add_sprite(LN_ENEMIES, alien)
                         i += 1
                         total_enemies += 1
+                # odd rows can have 9 aliens
                 else:
                     while i < 9 and total_enemies < LVL_ONE_ENEMY_COUNT:
                         # generate alien instance
@@ -134,6 +142,7 @@ class Game(arcade.Window):
                         alien.center_x = 2 * GRID_PIXEL_SIZE * (9 - i)
                         alien.center_y = SCREEN_HEIGHT - GRID_PIXEL_SIZE - (GRID_PIXEL_SIZE * row)
 
+                        # add alien to sprite list and increment counters
                         self.scene.add_sprite(LN_ENEMIES, alien)
                         i += 1
                         total_enemies += 1
@@ -214,6 +223,7 @@ class Game(arcade.Window):
 
         Returns: None
         '''
+        # move player ship to where mouse is positioned x-wise
         self.player_sprite.center_x = x
 
     def on_mouse_press(self, x, y, button, modifiers) -> None:
@@ -228,12 +238,21 @@ class Game(arcade.Window):
 
         Returns: None
         '''
+        # fire laser
         arcade.play_sound(self.player_laser_sound)
         bullet = arcade.Sprite(":resources:/images/space_shooter/laserBlue01.png", CHARACTER_LASER_SCALING)
+        
+        # rotate laser image
         bullet.angle = 90
+
+        # set bullet speed
         bullet.change_y = BULLET_SPEED
+
+        # position laser
         bullet.center_x = self.player_sprite.center_x
         bullet.bottom = self.player_sprite.top
+
+        # add to sprite list
         self.scene.add_sprite(LN_BULLETS, bullet)
 
 if __name__ == '__main__': assert False, "This is a class file. Please import its contents into another file."

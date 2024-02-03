@@ -11,6 +11,7 @@
 # module imports
 import arcade
 import os
+import random
 
 # class imports
 from alien import Alien
@@ -21,28 +22,31 @@ SCREEN_HEIGHT = 864
 SCREEN_TITLE = "Galactic Infiltrators"
 
 # sprite constants
-CHARACTER_SCALING = 1
-CHARACTER_LASER_SCALING = 0.8
+CHARACTER_SCALING = .75
+CHARACTER_LASER_SCALING = 0.55
 TILE_SCALING = 0.25
 SPRITE_PIXEL_SIZE = 128
 GRID_PIXEL_SIZE = SPRITE_PIXEL_SIZE * TILE_SCALING
+ENEMY_LASER_SCALING = 0.5
 
 # game constants
-BULLET_SPEED = 20
+PLAYER_BULLET_SPEED = 10
 BG_COLOR = (0,0,64)
-ANIMATION_TIMER_CAP = 60
+ANIMATION_TIMER_CAP = 30
 LVL_ONE_ENEMY_COUNT = 45
 LVL_ONE_ENEMY_ROW_CAP = 5
+ENEMY_BULLET_SPEED = -5
+ENEMY_FIRING_ODDS = 1000
 
 # player starting position
 PLAYER_START_X = 320
 PLAYER_START_Y = 96
 
 # layer names
-LN_BACKGROUND = "Background"
 LN_PLAYER = "Player"
 LN_ENEMIES = "Enemies"
 LN_BULLETS = "Bullets"
+LN_ENEMY_BULLETS = "Enemy Bullets"
 
 class Game(arcade.Window):
     def __init__(self):
@@ -58,6 +62,7 @@ class Game(arcade.Window):
 
         # keeps track of the player sprite
         self.player_sprite = None
+        self.player_lives = 0
 
         # camera for gui elements
         self.gui_camera = None
@@ -74,6 +79,7 @@ class Game(arcade.Window):
         # load sounds
         self.player_laser_sound = arcade.load_sound(":resources:sounds/laser2.wav")
         self.enemy_hit_sound = arcade.load_sound(":resources:sounds/hit4.wav")
+        self.player_hit_sound = arcade.load_sound(":resources:sounds/hurt3.wav")
 
         # timer for animations
         self.animation_timer = 0
@@ -94,16 +100,17 @@ class Game(arcade.Window):
 
         # setup scene
         self.scene = arcade.Scene()
-        self.scene.add_sprite_list(LN_BACKGROUND)
         self.scene.add_sprite_list(LN_PLAYER)
         self.scene.add_sprite_list(LN_ENEMIES)
         self.scene.add_sprite_list(LN_BULLETS)
+        self.scene.add_sprite_list(LN_ENEMY_BULLETS)
 
         # animation timer for alien animations
         self.animation_timer = 0
 
         # setup player
         self.score = 0
+        self.player_lives = 3
         self.player_sprite = arcade.Sprite(":resources:images/space_shooter/playerShip1_blue.png", CHARACTER_SCALING)
         self.player_sprite.center_x = PLAYER_START_X
         self.player_sprite.center_y = PLAYER_START_Y
@@ -180,9 +187,11 @@ class Game(arcade.Window):
         # get bullet and enemy lists
         bullet_list = self.scene.get_sprite_list(LN_BULLETS)
         enemy_list = self.scene.get_sprite_list(LN_ENEMIES)
+        enemy_bullet_list = self.scene.get_sprite_list(LN_ENEMY_BULLETS)
 
         # call update on each bullet
         bullet_list.update()
+        enemy_bullet_list.update()
 
         # call update on each enemy
         self.animation_timer += 1
@@ -216,6 +225,33 @@ class Game(arcade.Window):
 
             if player_is_hit:
                 print('Game Over!')
+                arcade.close_window()
+
+            odds = int(ENEMY_FIRING_ODDS * (1/60) / delta_time)
+
+            if random.randrange(odds) == 0:
+                bullet = arcade.Sprite(':resources:images/space_shooter/laserRed01.png', ENEMY_LASER_SCALING)
+                bullet.center_x = enemy.center_x
+                bullet.angle = 180
+                bullet.top = enemy.bottom
+                bullet.change_y = ENEMY_BULLET_SPEED
+                self.scene.add_sprite(LN_ENEMY_BULLETS, bullet)
+
+        for bullet in enemy_bullet_list:
+            player_is_hit = arcade.check_for_collision(bullet, self.player_sprite)
+
+            if player_is_hit:
+                arcade.play_sound(self.player_hit_sound)
+                self.player_lives -= 1
+                print(f'{self.player_lives} lives left!')
+                bullet.remove_from_sprite_lists()
+
+            if bullet.top < 0:
+                bullet.remove_from_sprite_lists()
+            
+            if self.player_lives == 0:
+                print('Game Over!')
+                arcade.close_window()
 
     def on_mouse_motion(self, x, y, dx, dy) -> None:
         '''
@@ -252,7 +288,7 @@ class Game(arcade.Window):
         bullet.angle = 90
 
         # set bullet speed
-        bullet.change_y = BULLET_SPEED
+        bullet.change_y = PLAYER_BULLET_SPEED
 
         # position laser
         bullet.center_x = self.player_sprite.center_x

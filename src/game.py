@@ -211,6 +211,12 @@ class Game(arcade.Window):
             if bullet.bottom > SCREEN_HEIGHT:
                 bullet.remove_from_sprite_lists()
 
+        for enemy in enemy_list:
+            player_is_hit = arcade.check_for_collision(enemy, self.player_sprite)
+
+            if player_is_hit:
+                print('Game Over!')
+
     def on_mouse_motion(self, x, y, dx, dy) -> None:
         '''
         Called whenever the mouse moves.

@@ -17,9 +17,6 @@ import math
 TXT_STATIC = 0
 TXT_MOVE = 1
 
-# enemy constants
-ENEMY_SPEED = 3.0
-
 class Alien(arcade.Sprite):
 
     def __init__(self, scaling, sprite_size, left=1):
@@ -28,9 +25,6 @@ class Alien(arcade.Sprite):
         # set working directory to be able to reference local resources
         file_path = os.path.dirname(os.path.abspath(__file__))
         os.chdir(file_path)
-
-        # keep track of unit speed
-        self.speed = ENEMY_SPEED
 
         # keep track of unit direction
         self.is_right = 1 * left

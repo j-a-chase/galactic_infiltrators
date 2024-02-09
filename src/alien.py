@@ -11,7 +11,6 @@
 # imports
 import arcade
 import os
-import math
 
 # image constants
 TXT_STATIC = 0

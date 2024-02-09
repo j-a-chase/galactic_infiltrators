@@ -5,7 +5,7 @@ There's still a lot of features I would like to add, which are listed below, and
 The game is played by moving your mouse back and forth to move your spaceship side to side. You have three lives, and taking damage from an alien removes one life, although I haven't made a display for the life system yet. If you run out of lives, that's game over! Additionally, if the aliens make it to the bottom of the screen and run into you, it's game over! You click the mouse to fire and in the current state of the game, one shot kills an alien.
 I hope to be able to add more levels with various types of enemies, as well as a better scoring system and another feature or two in the future!
 
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://youtu.be/7iDt1P92oUU)
 
 # Development Environment
 
